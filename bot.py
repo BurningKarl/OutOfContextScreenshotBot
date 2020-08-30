@@ -2,8 +2,11 @@
 import os
 import random
 
+import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+
+from screenshot import save_outofcontext_screenshot
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -23,8 +26,21 @@ async def on_ready():
     name="screenshot",
     help="Responds with a screenshot of your Out of Context lobby",
 )
-async def on_message(ctx, lobby: str):
-    await ctx.send("Hi! I registered your request.")
+async def send_screenshot(ctx, lobby: str):
+    waiting_message = await ctx.send("Wait a moment")
+    filename = save_outofcontext_screenshot(lobby)
+    await ctx.send(file=discord.File(filename))
+    os.remove(filename)
+    await waiting_message.delete()
+    await ctx.message.delete()
+
+
+@send_screenshot.error
+async def send_screenshot_error(ctx, error):
+    if isinstance(error, commands.errors.MissingRequiredArgument):
+        await ctx.send("You need to supply a lobby id.")
+    else:
+        raise error
 
 
 bot.run(TOKEN)
