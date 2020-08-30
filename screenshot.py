@@ -17,7 +17,7 @@ def save_outofcontext_screenshot(lobby):
     driver = webdriver.Chrome(options=chrome_options)
 
     # Set the username
-    driver.get(scribble_url)
+    driver.get(url)
     time.sleep(1)
     driver.find_element_by_name("playerName").send_keys("ScreenshotBot")
     driver.find_element("xpath", "//button").click()
@@ -30,6 +30,8 @@ def save_outofcontext_screenshot(lobby):
     filename = driver.title + "_" + datetime.now().isoformat() + ".png"
     menu_element.screenshot(filename)
     driver.quit()
+
+    return filename
 
 
 if __name__ == "__main__":
