@@ -2,29 +2,29 @@
 import os
 import random
 
-import discord
+from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
+TOKEN = os.getenv("DISCORD_TOKEN")
 
-class BotClient(discord.Client):
-    async def on_ready(self):
-        print(f'{self.user} has connected to Discord!')
-        for guild in client.guilds:
-            print(f'{self.user} is connected to {guild.name} (id: {guild.id})')
-            print(f'  Its members are:', [member.name for member in guild.members])
-
-    async def on_message(self, message):
-        if message.author == client.user:
-            return
-        print(message)
-        
-        if message.content == '!scribble_screenshot':
-            await message.channel.send('Hi! I registered your request.')
+bot = commands.Bot(command_prefix="ooc_")
 
 
-client = BotClient()
-client.run(TOKEN)
+@bot.event
+async def on_ready():
+    print(f"{bot.user} has connected to Discord!")
+    for guild in bot.guilds:
+        print(f"{bot.user} is connected to {guild.name} (id: {guild.id})")
+        print(f"  Its members are:", [member.name for member in guild.members])
 
 
+@bot.command(
+    name="screenshot",
+    help="Responds with a screenshot of your Out of Context lobby",
+)
+async def on_message(ctx, lobby: str):
+    await ctx.send("Hi! I registered your request.")
+
+
+bot.run(TOKEN)
