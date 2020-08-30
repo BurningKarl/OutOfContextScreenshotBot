@@ -26,13 +26,13 @@ async def on_ready():
     name="screenshot",
     help="Responds with a screenshot of your Out of Context lobby",
 )
-async def send_screenshot(ctx, lobby: str):
-    waiting_message = await ctx.send("Wait a moment")
+async def send_screenshot(ctx, lobby: str, channel: discord.TextChannel = None):
+    channel = channel or ctx
+    waiting_message = await channel.send("Wait a moment")
     filename = save_outofcontext_screenshot(lobby)
-    await ctx.send(file=discord.File(filename))
-    os.remove(filename)
     await waiting_message.delete()
-    await ctx.message.delete()
+    await channel.send(file=discord.File(filename))
+    os.remove(filename)
 
 
 @send_screenshot.error
