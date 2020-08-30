@@ -8,6 +8,7 @@ black = "*"
 
 [packages]
 selenium = "*"
+"discord.py" = "*"
 
 [requires]
 python_version = "3.8"
