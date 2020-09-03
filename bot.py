@@ -43,6 +43,7 @@ async def send_screenshot(ctx, lobby: str, channel: discord.TextChannel = None):
         await channel.send(str(error))
     except Exception as error:
         await channel.send(repr(error))
+        raise error
     else:
         await channel.send(file=discord.File(filename))
         os.remove(filename)
@@ -51,8 +52,14 @@ async def send_screenshot(ctx, lobby: str, channel: discord.TextChannel = None):
 @send_screenshot.error
 async def send_screenshot_error(ctx, error):
     if isinstance(error, commands.errors.MissingRequiredArgument):
-        await ctx.send("You need to supply a lobby id.")
+        if error.param.name == "lobby":
+            await ctx.send("You need to supply a lobby id.")
+        else:
+            await ctx.send(str(error))
+    elif isinstance(error, commands.errors.BadArgument):
+        await ctx.send(str(error))
     else:
+        await ctx.send(repr(error))
         raise error
 
 
