@@ -6,7 +6,12 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from screenshot import save_outofcontext_screenshot
+from screenshot import (
+    save_outofcontext_screenshot,
+    InvalidLobbyException,
+    PageNotFoundException,
+    PageDesignChangedException,
+)
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -28,11 +33,19 @@ async def on_ready():
 )
 async def send_screenshot(ctx, lobby: str, channel: discord.TextChannel = None):
     channel = channel or ctx
-    waiting_message = await channel.send("Wait a moment")
-    filename = save_outofcontext_screenshot(lobby)
-    await waiting_message.delete()
-    await channel.send(file=discord.File(filename))
-    os.remove(filename)
+    try:
+        filename = save_outofcontext_screenshot(lobby)
+    except (
+        InvalidLobbyException,
+        PageNotFoundException,
+        PageDesignChangedException,
+    ) as error:
+        await channel.send(str(error))
+    except Exception as error:
+        await channel.send(repr(error))
+    else:
+        await channel.send(file=discord.File(filename))
+        os.remove(filename)
 
 
 @send_screenshot.error
