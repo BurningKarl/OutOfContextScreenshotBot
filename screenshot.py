@@ -14,6 +14,10 @@ class InvalidLobbyException(Exception):
     pass
 
 
+class PageNotFoundException(Exception):
+    pass
+
+
 def save_outofcontext_screenshot(lobby):
     url = OUTOFCONTEXT_BASE_URL + lobby
 
@@ -30,7 +34,9 @@ def save_outofcontext_screenshot(lobby):
     # Check the validity of the lobby id
     title_div = driver.find_element_by_class_name("title")
     if title_div.text == "Invalid Lobby":
-        raise InvalidLobbyException(f"The lobby {lobby!r} does not exist")
+        raise InvalidLobbyException(f"The lobby id {lobby!r} is invalid.")
+    elif title_div.text == "Page Not Found":
+        raise PageNotFoundException(f"The url {url!r} was not found.")
 
     # Set the username
     driver.find_element_by_name("playerName").send_keys("ScreenshotBot")
