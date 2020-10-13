@@ -34,6 +34,7 @@ async def on_ready():
 async def send_screenshot(ctx, lobby: str, channel: discord.TextChannel = None):
     channel = channel or ctx
     try:
+        working_message = await ctx.send("Started working on it ...")
         filename = save_outofcontext_screenshot(lobby)
     except (
         InvalidLobbyException,
@@ -47,6 +48,9 @@ async def send_screenshot(ctx, lobby: str, channel: discord.TextChannel = None):
     else:
         await channel.send(file=discord.File(filename))
         os.remove(filename)
+        await working_message.edit(content="Started working on it ... Done")
+    finally:
+        await working_message.edit(delete_after=10)
 
 
 @send_screenshot.error
