@@ -29,7 +29,7 @@ def save_outofcontext_screenshot(lobby):
 
     # Load the webpage
     driver.get(url)
-    time.sleep(1)
+    time.sleep(3)
 
     # Check the validity of the lobby id
     title_div = driver.find_element_by_class_name("title")
